@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta OAB</title>
+</head>
+<body>
+    <h1>Consulta OAB</h1>
+    <label for="inscricao">Número da Inscrição:</label>
+    <input type="text" id="inscricao" name="inscricao">
+    <button onclick="buscarInformacoes()">Buscar</button>
+    <div id="resultado"></div>
+
+    <script>
+        function buscarInformacoes() {
+            var inscricao = document.getElementById('inscricao').value;
+            var url = 'https://cna.oab.org.br/Home/Search?Insc=' + inscricao;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    var resultado = document.getElementById('resultado');
+                    resultado.innerHTML = '';
+                    if (data.Success) {
+                        data.Data.forEach(item => {
+                            var div = document.createElement('div');
+                            div.innerHTML = `
+                                <p><strong>Nome:</strong> ${item.Nome}</p>
+                                <p><strong>Tipo Inscrição OAB:</strong> ${item.TipoInscOab}</p>
+                                <p><strong>Inscrição:</strong> ${item.Inscricao}</p>
+                                <p><strong>UF:</strong> ${item.UF}</p>
+                                <hr>
+                            `;
+                            resultado.appendChild(div);
+                        });
+                    } else {
+                        resultado.innerText = 'Erro ao buscar informações.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar informações:', error);
+                    var resultado = document.getElementById('resultado');
+                    resultado.innerText = 'Erro ao buscar informações.';
+                });
+        }
+    </script>
+</body>
+</html>
